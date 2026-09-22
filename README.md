@@ -121,6 +121,6 @@ java -jar target/springboot4-xxx-1.0.0.jar
 
 ## 许可证
 
-Copyright (c) 2018-2026 [Xiong Neng](https://www.xncoding.com/)
+Copyright (c) 2018-2026 [Xiong Neng](https://www.xncoding.me/)
 
 基于 MIT 协议发布：<http://www.opensource.org/licenses/MIT>

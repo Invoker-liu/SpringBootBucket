@@ -1,0 +1,26 @@
+# 集成测试专用配置（只在 @ActiveProfiles("test") 时生效）。
+#
+# 和前几篇同样的两个考虑：
+#
+# 1. 本篇要验证的 TTL、原子自增、JSON 序列化往返，都得靠真实的 Redis。
+#    用模拟器（embedded redis 已无人维护）模拟不出过期事件与真实协议行为，
+#    所以测试直接跑在真实服务端上。
+#
+# 2. 代价是测试依赖外部 Redis。连不上时不做"整体失败"，
+#    测试类里会先探测一次可用性，连不上就整体 skip。
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:192.168.1.97}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:root123456}
+      # Redis 默认开 16 个逻辑库（0~15）。主配置用 0，测试用 1：
+      # 键空间物理隔离，测试数据随便造，不碰演示数据。
+      # 这一点比 MongoDB 的"换个库名"还朴素，但 16 个库的上限
+      # 也是它只适合做环境隔离、不适合做业务隔离的原因。
+      database: 1
+
+logging:
+  level:
+    # 测试会发很多命令，DEBUG 会淹掉真正的失败信息
+    org.springframework.data.redis.core: WARN

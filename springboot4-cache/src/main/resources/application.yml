@@ -1,0 +1,50 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-cache
+
+  # ---------------------------------------------------------------------------
+  # 连接层：与 07 篇 Redis 完全一致。缓存管理器只是"复用"这里的连接工厂，
+  # 连接配置还是 spring.data.redis.* 这一组说了算。
+  # ---------------------------------------------------------------------------
+  data:
+    redis:
+      host: ${REDIS_HOST:192.168.1.97}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:root123456}
+      timeout: 2s
+      connect-timeout: 2s
+
+  # ---------------------------------------------------------------------------
+  # 缓存层：前缀 spring.cache.*，Boot 4 没改名（12 条正式属性）。
+  # ---------------------------------------------------------------------------
+  cache:
+    # 显式声明缓存提供者。不配的话自动按 GENERIC > JCACHE > ... > REDIS > ... > SIMPLE
+    # 的顺序探测，工程里同时有 RedisConnectionFactory 时选中的也是 redis；
+    # 写出来是为了教学上明确，也防止将来引了别的带缓存实现的依赖后被抢注
+    type: redis
+    redis:
+      # 全局默认 TTL：30 分钟。下面 CacheConfig 里给 orders 单独定制成 10 分钟、
+      # order-flash 定制成 2 秒（每缓存名粒度优先于全局值）
+      time-to-live: 30m
+      # 值序列化注意：默认是 JDK 序列化（要缓存对象 implements Serializable）。
+      # 本工程在 CacheConfig 里把 orders 换成了 JSON 序列化器，这里不另外配
+      cache-null-values: false
+      use-key-prefix: true
+      # 键前缀：最终键形如 sb4:cache:orders::SO20260919001
+      key-prefix: "sb4:cache:"
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    # 能看到缓存命中/未命中的 AOP 日志与 Redis 下发命令
+    org.springframework.cache: DEBUG
+    org.springframework.data.redis.core: DEBUG

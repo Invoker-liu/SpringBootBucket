@@ -1,0 +1,14 @@
+server:
+  port: ${SERVER_PORT:18230}
+
+spring:
+  application:
+    name: springboot4-jackson3
+  jackson:
+    # 全局空值策略默认关闭（注释状态），S4 第二轮用命令行参数开启做对比实测：
+    #   --spring.jackson.default-property-inclusion=non_null
+    # default-property-inclusion: non_null
+
+logging:
+  level:
+    com.xncoding.jackson3: DEBUG

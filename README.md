@@ -1,107 +1,126 @@
-## SpringBoot 全家桶
+# SpringBoot 4.x 全家桶
 
-[![GitHub issues](https://img.shields.io/github/issues/yidao620c/SpringBootBucket.svg)](https://github.com/yidao620c/SpringBootBucket/issues)
-[![License][licensesvg]][license]
-[![Github downloads](https://img.shields.io/github/downloads/yidao620c/SpringBootBucket/total.svg)](https://github.com/yidao620c/SpringBootBucket/releases/latest)
-[![GitHub release](https://img.shields.io/github/release/yidao620c/SpringBootBucket.svg)](https://github.com/yidao620c/SpringBootBucket/releases)
+当前项目是 [SpringBootBucket](https://github.com/yidao620c/SpringBootBucket) 的 Spring Boot 4.x 重制版。
 
-Spring Boot 现在已经成为Java 开发领域的一颗璀璨明珠，它本身是包容万象的，可以跟各种技术集成。
+对 Java Web 开发中常用的各项技术，通过和 Spring Boot 的集成，以「**一篇博客 + 一个可运行项目**」的形式详细说明。
 
-本项目对目前Web开发中常用的各个技术，通过和SpringBoot的集成，并且对各种技术通过“一篇博客 + 一个可运行项目”的形式来详细说明。
+每个子项目只引入完成该主题所需的最小依赖，可独立运行，也可按业务需要自由组合。
 
-每个子项目都会使用最小依赖，大家拿来即可使用，自己可以根据业务需求自由组合搭配不同的技术构建项目。
+> 基于 Spring Boot 2.0 的旧版教程已归档至 `springboot2.0` 分支，保持只读不再维护。
 
-**加粗提醒：**
+## 版本基线
 
-1. master分支基于最新Spring Boot 2构建！
-2. spring1.5分支基于Spring Boot 1.5.10构建！
+| 项 | 版本 |
+| --- | --- |
+| JDK | 21（Spring Boot 4 基线为 17，推荐 21 / 25） |
+| Spring Boot | 4.1.1 |
+| Spring Framework | 7.0.9 |
+| Maven | 3.9 |
+| 容器 | Tomcat 11（内置，Undertow 已在 4.0 移除） |
+| JSON | Jackson 3（`tools.jackson` 包名） |
 
-## 项目简介
+## 环境准备
 
-![](https://xnstatic-1253397658.file.myqcloud.com/SpringBootBucket.png)
+依赖外部中间件的主题（数据库、缓存、消息队列）统一使用 Docker Compose 编排，无需在宿主机单独安装：
 
-## 子项目列表
-
-每个子项目会配有一篇博客文章的详细讲解 :point_right:
-
-项目名称                    | 文章地址
-----------------------------|------------------------------------------------------------------------------------------
-springboot-thymeleaf        | [集成Thymeleaf构建Web应用](https://www.xncoding.com/2017/07/01/spring/sb-thymeleaf.html)
-springboot-mybatis          | [集成MyBatis](https://www.xncoding.com/2017/07/02/spring/sb-mybatis.html)
-springboot-hibernate        | [集成Hibernate](https://www.xncoding.com/2017/07/03/spring/sb-hibernate.html)
-springboot-mongodb          | [集成MongoDB](https://www.xncoding.com/2017/07/04/spring/sb-mongodb.html)
-springboot-restful          | [实现RESTful接口](https://www.xncoding.com/2017/07/05/spring/sb-restful.html)
-springboot-resttemplate     | [使用RestTemplate](https://www.xncoding.com/2017/07/06/spring/sb-restclient.html)
-springboot-shiro            | [集成Shiro权限管理](https://www.xncoding.com/2017/07/07/spring/sb-shiro.html)
-springboot-swagger2         | [集成Swagger2自动生成API文档](https://www.xncoding.com/2017/07/08/spring/sb-swagger2.html)
-springboot-jwt              | [集成JWT实现接口权限认证](https://www.xncoding.com/2017/07/09/spring/sb-jwt.html)
-springboot-multisource      | [多数据源配置](https://www.xncoding.com/2017/07/10/spring/sb-multisource.html)
-springboot-schedule         | [定时任务](https://www.xncoding.com/2017/07/12/spring/sb-schedule.html)
-springboot-cxf              | [cxf实现WebService](https://www.xncoding.com/2017/07/13/spring/sb-cxf.html)
-springboot-websocket        | [使用WebScoket实时通信](https://www.xncoding.com/2017/07/15/spring/sb-websocket.html)
-springboot-socketio         | [集成SocketIO实时通信](https://www.xncoding.com/2017/07/16/spring/sb-socketio.html)
-springboot-async            | [异步线程池](https://www.xncoding.com/2017/07/20/spring/sb-async.html)
-springboot-starter          | [教你自己写starter](https://www.xncoding.com/2017/07/22/spring/sb-starter.html)
-springboot-aop              | [使用AOP](https://www.xncoding.com/2017/07/24/spring/sb-aop.html)
-springboot-transaction      | [声明式事务](https://www.xncoding.com/2017/07/26/spring/sb-transaction.html)
-springboot-cache            | [使用缓存](https://www.xncoding.com/2017/07/28/spring/sb-cache.html)
-springboot-redis            | [Redis数据库](https://www.xncoding.com/2017/07/30/spring/sb-redis.html)
-springboot-batch            | [批处理](https://www.xncoding.com/2017/08/01/spring/sb-batch.html)
-springboot-rabbitmq         | [使用消息队列RabbitMQ](https://www.xncoding.com/2017/08/06/spring/sb-rabbitmq.html)
-springboot-echarts          | [集成Echarts导出图片](https://www.xncoding.com/2017/08/19/spring/sb-echarts.html)
-
-## 环境
-
-* JDK 1.8
-* Maven latest
-* Spring Boot 2.0.4
-* Intellij IDEA
-* mysql 5.7
-* mongodb
-* git 版本管理
-* nginx 反向代理
-* redis 缓存
-* rabbitmq 消息队列
-
-## 运行
-
-每个子项目都可以单独运行，都是打包成jar包后，通过使用内置jetty容器执行，有3种方式运行。:point_right:
-
-1. 在IDEA里面直接运行Application.java的main函数。
-2. 另一种方式是执行`mvn clean package`命令后传到linux服务器上面，通过命令`java -Xms64m -Xmx1024m -jar xxx.jar`方式运行
-3. 在linux服务器上面，配置好jdk、maven、git命令后，通过`git clone sb-xxx`拉取工程后，执行`./run.sh start test`命令来执行
-
-注：每个子项目有自己的README.md文件，告诉你该怎么初始化环境，比如准备好数据库SQL文件等。
-
-另外，如果你需要打包成war包放到tomcat容器中运行，可修改pom.xml文件，将打包类型从jar改成war，打包后再放到容器中运行：
-
-``` xml
-<modelVersion>4.0.0</modelVersion>
-<artifactId>springboot-cache</artifactId>
-<packaging>war</packaging>
+```bash
+docker compose up -d          # 启动 MySQL / MongoDB / Redis / RabbitMQ
+docker compose ps             # 查看容器与健康状态
+docker compose down           # 停止
+docker compose down -v        # 停止并清空数据
 ```
 
-## 后续计划
+| 服务 | 端口 | 账号 |
+| --- | --- | --- |
+| MySQL 8.4 | 3306 | root / root123456 |
+| MongoDB 8.0 | 27017 | root / root123456 |
+| Redis 8.0 | 6379 | 密码 root123456 |
+| RabbitMQ 4（含管理台） | 5672 / 15672 | admin / admin123456 |
 
-1. 集成OAuth2认证
-1. 集成GitHub、微信等第三方登录
-1. 集成网络爬虫框架
+各主题所需的建库建表脚本放在对应工程的 `src/main/resources/sql/` 下，具体步骤见该工程的 README。
 
-## 问题反馈
+## 运行方式
 
-1. 欢迎提issue一起完善这个项目
-1. Email: yidao620@gmail.com
-1. 个人主站: https://www.xncoding.com/
+每个子项目均可独立运行：
+
+```bash
+cd springboot4-xxx
+mvn clean package
+java -jar target/springboot4-xxx-1.0.0.jar
+```
+
+也可以直接在 IDE 中运行启动类的 `main` 方法。默认端口为 `8080`，如与本地服务冲突，在 `application.yml` 中调整 `server.port`。
+
+## 主题索引
+
+进度以 `待编写 → 进行中 → 已完成` 标记。
+
+### P-1 Web 与数据
+
+| 项目 | 文章 | 状态 |
+| --- | --- | --- |
+| [springboot4-restful](springboot4-restful) | [SpringBoot4系列01 - 实现RESTful接口](articles/SpringBoot4系列01%20-%20实现RESTful接口.md) | 已完成 |
+| [springboot4-mybatis](springboot4-mybatis) | [SpringBoot4系列02 - 集成MyBatis-Plus](articles/SpringBoot4系列02%20-%20集成MyBatis-Plus.md) | 已完成 |
+| [springboot4-jpa](springboot4-jpa) | [SpringBoot4系列03 - 集成Spring Data JPA与Hibernate 7](articles/SpringBoot4系列03%20-%20集成Spring%20Data%20JPA与Hibernate%207.md) | 已完成 |
+| [springboot4-mongodb](springboot4-mongodb) | [SpringBoot4系列04 - 集成MongoDB](articles/SpringBoot4系列04%20-%20集成MongoDB.md) | 已完成 |
+| [springboot4-multisource](springboot4-multisource) | [SpringBoot4系列05 - 多数据源配置](articles/SpringBoot4系列05%20-%20多数据源配置.md) | 已完成 |
+| [springboot4-transaction](springboot4-transaction) | [SpringBoot4系列06 - 声明式事务](articles/SpringBoot4系列06%20-%20声明式事务.md) | 已完成 |
+
+### P-2 中间件与集成
+
+| 项目 | 文章 | 状态 |
+| --- | --- | --- |
+| [springboot4-redis](springboot4-redis) | [SpringBoot4系列07 - Redis数据库](articles/SpringBoot4系列07%20-%20Redis数据库.md) | 已完成 |
+| [springboot4-cache](springboot4-cache) | [SpringBoot4系列08 - 使用缓存](articles/SpringBoot4系列08%20-%20使用缓存.md) | 已完成 |
+| [springboot4-rabbitmq](springboot4-rabbitmq) | [SpringBoot4系列09 - 使用消息队列RabbitMQ](articles/SpringBoot4系列09%20-%20使用消息队列RabbitMQ.md) | 已完成 |
+| [springboot4-batch](springboot4-batch) | [SpringBoot4系列10 - 使用批处理Spring Batch](articles/SpringBoot4系列10%20-%20使用批处理Spring%20Batch.md) | 已完成 |
+| [springboot4-schedule](springboot4-schedule) | [SpringBoot4系列11 - 使用定时任务Schedule](articles/SpringBoot4系列11%20-%20使用定时任务Schedule.md) | 已完成 |
+| [springboot4-async](springboot4-async) | [SpringBoot4系列12 - 使用异步任务与线程池](articles/SpringBoot4系列12%20-%20使用异步任务与线程池.md) | 已完成 |
+| [springboot4-websocket](springboot4-websocket) | [SpringBoot4系列13 - 使用WebSocket实时通信](articles/SpringBoot4系列13%20-%20使用WebSocket实时通信.md) | 已完成 |
+| [springboot4-restclient](springboot4-restclient) | [SpringBoot4系列14 - 使用声明式HTTP客户端RestClient](articles/SpringBoot4系列14%20-%20使用声明式HTTP客户端RestClient.md) | 已完成 |
+| [springboot4-grpc](springboot4-grpc) | [SpringBoot4系列15 - 集成gRPC服务](articles/SpringBoot4系列15%20-%20集成gRPC服务.md) | 已完成 |
+
+### P-3 工程化与安全
+
+| 项目 | 文章 | 状态 |
+| --- | --- | --- |
+| [springboot4-aop](springboot4-aop) | [SpringBoot4系列16 - 使用AOP](articles/SpringBoot4系列16%20-%20使用AOP.md) | 已完成 |
+| [springboot4-starter](springboot4-starter) | [SpringBoot4系列17 - 自己写Starter](articles/SpringBoot4系列17%20-%20自己写Starter.md) | 已完成 |
+| [springboot4-security](springboot4-security) | [SpringBoot4系列18 - 使用Spring Security 7权限管理](articles/SpringBoot4系列18%20-%20使用Spring%20Security%207权限管理.md) | 已完成 |
+| [springboot4-oauth2](springboot4-oauth2) | [SpringBoot4系列19 - 使用OAuth2与JWT接口认证](articles/SpringBoot4系列19%20-%20使用OAuth2与JWT接口认证.md) | 已完成 |
+| [springboot4-openapi](springboot4-openapi) | [SpringBoot4系列20 - 使用OpenAPI 3.1接口文档](articles/SpringBoot4系列20%20-%20使用OpenAPI%203.1接口文档.md) | 已完成 |
+| [springboot4-testing](springboot4-testing) | [SpringBoot4系列21 - 测试体系JUnit 6与Testcontainers](articles/SpringBoot4系列21%20-%20测试体系JUnit%206与Testcontainers.md) | 已完成 |
+| [springboot4-apiversion](springboot4-apiversion) | [SpringBoot4系列22 - 使用API版本管理](articles/SpringBoot4系列22%20-%20使用API版本管理.md) | 已完成 |
+| [springboot4-jackson3](springboot4-jackson3) | [SpringBoot4系列23 - 使用Jackson 3与空安全](articles/SpringBoot4系列23%20-%20使用Jackson%203与空安全.md) | 已完成 |
+
+### P-4 生产化
+
+| 项目 | 文章 | 状态 |
+| --- | --- | --- |
+| [springboot4-observability](springboot4-observability) | [SpringBoot4系列24 - 使用Actuator与OpenTelemetry可观测性](articles/SpringBoot4系列24%20-%20使用Actuator与OpenTelemetry可观测性.md) | 已完成 |
+| [springboot4-resilience](springboot4-resilience) | [SpringBoot4系列25 - 使用内置弹性重试与并发限制](articles/SpringBoot4系列25%20-%20使用内置弹性重试与并发限制.md) | 已完成 |
+| [springboot4-native](springboot4-native) | [SpringBoot4系列26 - 使用GraalVM原生镜像与AOT](articles/SpringBoot4系列26%20-%20使用GraalVM原生镜像与AOT.md) | 已完成 |
+| [springboot4-virtualthreads](springboot4-virtualthreads) | [SpringBoot4系列27 - 使用虚拟线程提升吞吐](articles/SpringBoot4系列27%20-%20使用虚拟线程提升吞吐.md) | 已完成 |
+| [springboot4-thymeleaf](springboot4-thymeleaf) | [SpringBoot4系列28 - 集成Thymeleaf服务端渲染](articles/SpringBoot4系列28%20-%20集成Thymeleaf服务端渲染.md) | 已完成 |
+| [springboot4-echarts](springboot4-echarts) | [SpringBoot4系列29 - 服务端图表数据接口与PNG导出](articles/SpringBoot4系列29%20-%20服务端图表数据接口与PNG导出.md) | 已完成 |
+
+### P-5 前沿
+
+| 项目 | 文章 | 状态 |
+| --- | --- | --- |
+| [springboot4-ai-mcp](springboot4-ai-mcp) | [SpringBoot4系列30 - 用Spring AI把业务接口暴露成MCP工具](articles/SpringBoot4系列30%20-%20用Spring%20AI把业务接口暴露成MCP工具.md) | 已完成 |
+
+## 目录结构
+
+```
+.
+├── articles/                 # 教程文章（Markdown）
+├── springboot4-xxx/          # 各主题可运行工程
+├── docker-compose.yml        # 本地中间件编排
+```
 
 ## 许可证
 
-[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](http://www.opensource.org/licenses/MIT)
+Copyright (c) 2018-2026 [Xiong Neng](https://www.xncoding.com/)
 
-Copyright (c) 2018 [Xiong Neng](https://www.xncoding.com/)
-
-基于 MIT 协议发布: <http://www.opensource.org/licenses/MIT>
-
-
-[licensesvg]: https://img.shields.io/badge/license-MIT-brightgreen.svg
-[license]: http://www.opensource.org/licenses/MIT
-
+基于 MIT 协议发布：<http://www.opensource.org/licenses/MIT>

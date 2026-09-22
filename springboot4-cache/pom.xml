@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.xncoding</groupId>
+    <artifactId>springboot4-cache</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>springboot4-cache</name>
+    <description>Spring Boot 4 教程：使用缓存</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Web MVC：Boot 4 中 spring-boot-starter-web 已弃用，改用 webmvc -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- 参数校验 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- 缓存抽象：starter-cache 只带 spring-boot-cache（自动配置）+
+             spring-context-support（CaffeineCacheManager 等实现的家），
+             它自己不带任何具体缓存实现 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <!-- Redis：缓存管理器选 REDIS 类型的前提是容器里有 RedisConnectionFactory，
+             它由这个 starter 的 DataRedisAutoConfiguration 装配。
+             没有这一句，spring.cache.type=redis 会启动失败 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- 缓存有专属测试 starter：@AutoConfigureCache 在
+             org.springframework.boot.cache.test.autoconfigure（Boot 4 新拆分），
+             内含 spring-boot-starter-test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 端到端测试走 HTTP，补上 webmvc 测试 starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

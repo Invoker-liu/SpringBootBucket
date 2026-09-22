@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:18120}
+
+spring:
+  application:
+    name: springboot4-async
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_async}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 业务表建表（IF NOT EXISTS，幂等）
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  # 属性路：spring.task.execution.* 喂给 ThreadPoolTaskExecutorBuilder，
+  # 手工 @Bean bizExecutor 只调用 builder.build() 就能继承这组值
+  task:
+    execution:
+      thread-name-prefix: biz-
+      pool:
+        core-size: 4
+        max-size: 8
+        queue-capacity: 100
+      shutdown:
+        await-termination: true
+        await-termination-period: 5s
+
+app:
+  chaos:
+    # 三件慢事的模拟耗时：短信 600ms + 积分 700ms + 报表 800ms，同步串行 2.1 秒
+    sms-millis: ${SMS_MILLIS:600}
+    points-millis: ${POINTS_MILLIS:700}
+    report-millis: ${REPORT_MILLIS:800}
+
+logging:
+  level:
+    com.xncoding.async: INFO

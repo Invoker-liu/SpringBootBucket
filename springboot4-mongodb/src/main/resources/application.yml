@@ -1,0 +1,56 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-mongodb
+
+  # ---------------------------------------------------------------------------
+  # 连接层：Boot 4 起改叫 spring.mongodb.*
+  #
+  # 这一族属性在 Boot 3 里叫 spring.data.mongodb.*，4.0.0 全部改名。
+  # 旧名不是"还能用但会告警"，是真的不绑定了——写了等于没写，
+  # 客户端会悄无声息地退回默认的 mongodb://localhost/test，日志里一句提示都没有。
+  # 详见 README 的"属性改名"一节。
+  # ---------------------------------------------------------------------------
+  mongodb:
+    uri: mongodb://${MONGO_USER:root}:${MONGO_PASSWORD:root123456}@${MONGO_HOST:127.0.0.1}:${MONGO_PORT:27017}/${MONGO_DB:springboot4_mongo}?authSource=admin
+    # 也可以不用 uri，改用下面这几个分开写（uri 优先级更高，配了 uri 就忽略它们）
+    # host: ${MONGO_HOST:127.0.0.1}
+    # port: ${MONGO_PORT:27017}
+    # database: ${MONGO_DB:springboot4_mongo}
+    # authentication-database: admin
+    # username: ${MONGO_USER:root}
+    # password: ${MONGO_PASSWORD:root123456}
+
+  # ---------------------------------------------------------------------------
+  # Spring Data 层：这一族仍然叫 spring.data.mongodb.*
+  #
+  # 同一个 yml 里，连接属性在 spring.mongodb 下、数据层属性在 spring.data.mongodb 下，
+  # 迁移时不能一把全局替换。原因见 README。
+  # ---------------------------------------------------------------------------
+  data:
+    mongodb:
+      # 关掉的话，实体上那些 @Indexed / @CompoundIndex 就只是注释，索引永远不会被创建。
+      # 默认值是 false —— 这一点十篇教程有九篇不提。
+      auto-index-creation: true
+      repositories:
+        # auto：只要 classpath 上有 MongoRepository 就启用（默认值）
+        type: auto
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    # Spring Data 视角的查询：能看到 Query 对象、字段名、$push/$pull 这些操作。
+    # 注意它打的是【翻译前】的 Query，不等于最终下发的报文——
+    # 例如 findById 在这里显示成 { "id" : "..." }，实际发出去的是 { "_id" : { "$oid": "..." } }。
+    # 要拿"到底发了什么"当证据，只能看下面那个驱动层日志。
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    # 驱动层原始报文（Command: {...}），是唯一权威的"下发了什么"。输出量很大，平时别开
+    # org.mongodb.driver.protocol.command: DEBUG

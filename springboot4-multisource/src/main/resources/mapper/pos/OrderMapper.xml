@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  放在 resources/mapper/pos/ 下面，只被 posSqlSessionFactory 加载。
+  三个 mapper 目录各配各的，是多数据源下的硬性要求 ——
+  SqlSessionFactory 是「数据源 + 配置 + 映射文件」的整包，
+  混着加载不会报错，但 mapper 会静默绑到先加载完的那个工厂上，
+  之后从别的库查就会得到一个表不存在的错。
+-->
+<mapper namespace="com.xncoding.multisource.mapper.pos.OrderMapper">
+
+    <resultMap id="OrderDetailMap" type="com.xncoding.multisource.dto.OrderDetail">
+        <id property="id" column="id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="databaseName" column="database_name"/>
+        <collection property="items" ofType="com.xncoding.multisource.domain.OrderItem">
+            <id property="id" column="item_id"/>
+            <result property="orderId" column="item_order_id"/>
+            <result property="productName" column="item_product_name"/>
+            <result property="quantity" column="item_quantity"/>
+            <result property="price" column="item_price"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectOrderDetail" resultMap="OrderDetailMap">
+        SELECT o.id,
+               o.order_no,
+               o.customer_name,
+               o.total_amount,
+               o.status,
+               o.created_at,
+               DATABASE()     AS database_name,
+               i.id           AS item_id,
+               i.order_id     AS item_order_id,
+               i.product_name AS item_product_name,
+               i.quantity     AS item_quantity,
+               i.price        AS item_price
+        FROM t_order o
+                 LEFT JOIN t_order_item i ON i.order_id = o.id
+        WHERE o.id = #{orderId}
+        ORDER BY i.id
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*)
+        FROM t_order
+    </select>
+
+    <select id="currentDatabase" resultType="string">
+        SELECT DATABASE()
+    </select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 只被 bizSqlSessionFactory 加载。见 pos/OrderMapper.xml 顶部的说明。 -->
+<mapper namespace="com.xncoding.multisource.mapper.biz.ProductMapper">
+
+    <select id="selectLowStock" resultType="com.xncoding.multisource.domain.Product">
+        SELECT id,
+               product_name,
+               category,
+               price,
+               stock
+        FROM t_product
+        WHERE stock &lt;= #{threshold}
+        ORDER BY stock ASC, id ASC
+    </select>
+
+    <select id="currentDatabase" resultType="string">
+        SELECT DATABASE()
+    </select>
+
+</mapper>

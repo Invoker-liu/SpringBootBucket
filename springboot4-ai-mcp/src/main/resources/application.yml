@@ -1,0 +1,19 @@
+server:
+  port: 18300
+
+spring:
+  application:
+    name: springboot4-ai-mcp
+  ai:
+    mcp:
+      server:
+        # MCP 协议里的 serverInfo，宿主握手时读到
+        name: order-mcp-server
+        version: 1.0.0
+        # 会展示给 LLM 的工具集说明，帮助模型判断「这个服务器是干嘛的」
+        instructions: 订单域工具集：按ID查订单、按客户查订单列表、创建订单、近7天订单汇总。
+        # Spring AI 2.0 默认已是 STREAMABLE（Streamable HTTP，端点 /mcp），显式写出便于理解
+        protocol: streamable
+        type: sync
+        capabilities:
+          tool: true

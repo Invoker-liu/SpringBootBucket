@@ -1,0 +1,29 @@
+# 测试专用配置。
+#
+# 这个文件【不覆盖数据源配置】—— application.yml 里的 spring.datasource 会照常加载，
+# 测试连的就是树莓派上那个真实的 MySQL 库。
+#
+# 事务这个主题没法用内存库替代：本篇要验证的一半结论（readOnly 是否真的拦得住写、
+# 隔离级别有没有落到连接上、NESTED 的 savepoint、子线程拿到的是不是另一条连接）
+# 全都依赖具体数据库和驱动的行为。换 H2 跑出来的结论不能代表 MySQL。
+#
+# 跑测试前先执行 .workbuddy/reset-transaction-db.sh，
+# 保证种子数据是干净的（应用启动时也会自己跑一遍 schema + data）。
+
+spring:
+  main:
+    banner-mode: "off"
+
+logging:
+  level:
+    root: WARN
+    # application.yml 里为了写文章把事务日志开到了 DEBUG，测试里得关掉 ——
+    # 每个用例都会跑好几次事务，不关的话日志量会淹没真正的失败信息
+    org.springframework.transaction: WARN
+    org.springframework.transaction.interceptor: WARN
+    org.springframework.jdbc.datasource.DataSourceTransactionManager: WARN
+    org.springframework.jdbc.support.JdbcTransactionManager: WARN
+    # application.yml 里为了写文章也把 mapper 的 SQL 开到了 DEBUG，
+    # 46 个用例跑下来是几万行，测试里一并关掉
+    com.xncoding.transaction.mapper: WARN
+    com.xncoding.transaction: INFO

@@ -1,0 +1,22 @@
+server:
+  port: ${SERVER_PORT:18130}
+
+spring:
+  application:
+    name: springboot4-websocket
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_websocket}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 业务表建表（IF NOT EXISTS，幂等）
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+logging:
+  level:
+    com.xncoding.websocket: INFO

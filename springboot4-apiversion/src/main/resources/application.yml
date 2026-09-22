@@ -1,0 +1,29 @@
+server:
+  # 本系列统一端口约定：环境变量优先，默认 18220
+  port: ${SERVER_PORT:18220}
+
+spring:
+  application:
+    name: springboot4-apiversion
+  mvc:
+    # 开启 RFC 9457 ProblemDetail，错误响应统一为 application/problem+json
+    problemdetails:
+      enabled: true
+    # API 版本管理：Framework 7 版本化路由 + Boot 4.1 属性装配
+    apiversion:
+      # 请求不带版本时按 1 处理（属性名是 default，不是 default-version）
+      default: 1
+      # false 才允许缺省版本回落到 default；true 时无版本请求直接 400
+      required: false
+      # 校验白名单：请求版本必须精确落在集合内（2.4.1 这类小版本也要列出来），
+      # "2+" 范围匹配只对通过白名单的版本生效
+      supported: 1, 2, 3
+      use:
+        # 路线一：请求头 X-Api-Version: 2
+        header: X-Api-Version
+        # 路线二：查询参数 ?api-version=2
+        query-parameter: api-version
+
+logging:
+  level:
+    com.xncoding.apiversion: DEBUG

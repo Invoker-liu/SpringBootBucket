@@ -1,0 +1,13 @@
+server:
+  # 本系列统一端口约定：环境变量优先，默认 18250
+  port: ${SERVER_PORT:18250}
+
+spring:
+  application:
+    name: springboot4-resilience
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level %logger{24} - %msg%n"

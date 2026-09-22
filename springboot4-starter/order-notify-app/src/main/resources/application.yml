@@ -1,0 +1,9 @@
+server:
+  port: ${SERVER_PORT:18170}
+
+order:
+  notify:
+    # enabled 缺省即 true，这里显式写出便于对照
+    enabled: true
+    max-retries: 2
+    channel: logging

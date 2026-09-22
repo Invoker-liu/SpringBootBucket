@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: springboot4-restful
+  mvc:
+    # 开启 RFC 9457 ProblemDetail，全局错误响应统一为 application/problem+json
+    problemdetails:
+      enabled: true
+  jackson:
+    # Jackson 3 默认不再输出 null 字段，这里显式保持"空值不落地"的契约
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    com.xncoding.restful: DEBUG

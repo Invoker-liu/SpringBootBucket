@@ -1,0 +1,52 @@
+server:
+  # 本系列统一端口约定：环境变量优先，默认 18240
+  port: ${SERVER_PORT:18240}
+
+spring:
+  application:
+    name: springboot4-observability
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # 默认只暴露 health，按需补齐 metrics 与 prometheus 刮擦端点
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      # 演示工程全量采样，生产按 0.1 左右权衡成本
+      probability: 1.0
+  opentelemetry:
+    # OTel Resource 公共属性：metrics 走 Micrometer OTLP registry 时同样生效
+    resource-attributes:
+      service.name: springboot4-observability
+      service.namespace: springboot4-bucket
+    tracing:
+      export:
+        # 链路 OTLP 导出（Boot 4.1 新前缀；旧 management.otlp.tracing.* 已是兼容别名）
+        otlp:
+          endpoint: http://127.0.0.1:4318/v1/traces
+        # 演示把批量延迟压到 2s，默认 5s
+        schedule-delay: 2s
+    logging:
+      export:
+        otlp:
+          # 日志 OTLP 导出，默认开关 management.logging.export.otlp.enabled 为 true
+          endpoint: http://127.0.0.1:4318/v1/logs
+  otlp:
+    metrics:
+      export:
+        # 指标导出走 Micrometer 的 OtlpMeterRegistry，前缀仍是 management.otlp.metrics.*
+        url: http://127.0.0.1:4318/v1/metrics
+        step: 5s
+
+logging:
+  pattern:
+    # traceId/spanId 由 Micrometer Tracing 写入 MDC，模式里用 %X 显式带出
+    console: "%d{HH:mm:ss.SSS} %-5level [traceId=%X{traceId:-} spanId=%X{spanId:-}] %logger{24} - %msg%n"
+  level:
+    # 无收集器时导出失败只保留 WARN，避免刷屏
+    io.opentelemetry.exporter: WARN

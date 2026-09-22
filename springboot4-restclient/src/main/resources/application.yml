@@ -1,0 +1,20 @@
+server:
+  port: ${SERVER_PORT:18140}
+
+spring:
+  application:
+    name: springboot4-restclient
+
+upstream:
+  logistics:
+    base-url: ${LOGISTICS_BASE_URL:http://localhost:18141}
+    connect-timeout: 2s
+    read-timeout: 3s
+  risk:
+    base-url: ${RISK_BASE_URL:http://localhost:18141}
+    connect-timeout: 2s
+    read-timeout: 1500ms
+
+logging:
+  level:
+    com.xncoding.restclient: INFO

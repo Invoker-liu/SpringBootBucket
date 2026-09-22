@@ -1,0 +1,96 @@
+# SpringBoot4 全家桶教程 —— 本地中间件统一编排
+#
+# 用途：为本系列中依赖外部中间件的主题提供一致的运行环境。
+# 启动：docker compose up -d
+# 停止：docker compose down
+# 清空数据（慎用）：docker compose down -v
+# 管理台：RabbitMQ http://localhost:15672
+#
+# 硬件要求提醒：MongoDB 5.0 及以上要求 CPU 支持 ARMv8.2-A 的 LSE 原子指令。
+# 在 Raspberry Pi 4（Cortex-A72，ARMv8.0-A）等设备上会以 SIGILL 崩溃，退出码 132。
+# 此类设备请注释掉 mongodb 服务，改用其他机器承载 MongoDB。
+
+name: springboot4-bucket
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: sb4-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+08:00
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot123456 --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  mongodb:
+    image: mongo:8.0
+    container_name: sb4-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root123456
+      TZ: Asia/Shanghai
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  redis:
+    image: redis:8.0
+    container_name: sb4-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "root123456"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a root123456 ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: sb4-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123456
+      TZ: Asia/Shanghai
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  mysql-data:
+  mongo-data:
+  redis-data:
+  rabbitmq-data:

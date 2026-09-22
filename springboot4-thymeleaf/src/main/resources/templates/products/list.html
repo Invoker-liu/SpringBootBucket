@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('商品列表')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container">
+    <h1>商品管理</h1>
+
+    <!-- 重定向带来的闪属性：只展示一次，刷新后消失 -->
+    <div class="flash" th:if="${message}" th:text="${message}">操作成功</div>
+
+    <form class="filter" method="get" th:action="@{/products}">
+        <input type="text" name="keyword" th:value="${keyword}" placeholder="按名称搜索">
+        <button type="submit">搜索</button>
+        <a class="btn" th:href="@{/products/new}">+ 新增商品</a>
+    </form>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>分类</th>
+            <th>售价（元）</th>
+            <th>库存</th>
+            <th>简介</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${pageResult.items}">
+            <td th:text="${p.id}">1</td>
+            <td th:text="${p.name}">商品名</td>
+            <td th:text="${p.category}">DIGITAL</td>
+            <td th:text="${#numbers.formatDecimal(p.price, 1, 2)}">0.00</td>
+            <td th:text="${p.stock}">0</td>
+            <td th:text="${p.summary}">简介</td>
+            <td><a th:href="@{'/products/' + ${p.id} + '/edit'}">编辑</a></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(pageResult.items)}">
+            <td colspan="7" class="empty">没有匹配的商品</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pager">
+        <span th:text="'共 ' + ${pageResult.total} + ' 条 / ' + ${pageResult.totalPages} + ' 页'">共 0 条 / 1 页</span>
+        <a th:if="${pageResult.page > 1}" th:href="@{/products(page=${pageResult.page - 1}, keyword=${keyword})}">上一页</a>
+        <strong th:text="${pageResult.page}">1</strong>
+        <a th:if="${pageResult.page < pageResult.totalPages}"
+           th:href="@{/products(page=${pageResult.page + 1}, keyword=${keyword})}">下一页</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

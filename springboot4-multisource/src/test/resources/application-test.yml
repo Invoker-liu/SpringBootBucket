@@ -1,0 +1,20 @@
+# 测试专用配置。
+#
+# 注意这个文件【不覆盖数据源配置】—— application.yml 里的 app.datasource.pos / biz
+# 会照常加载，测试连的就是那两个真实的 MySQL 库。
+# 多数据源这个主题没法用内存库糊弄：嵌入式数据库只有一个实例，
+# 而这里要验证的恰恰是「两套连接指向两个不同的库」。
+#
+# 跑测试前先执行 .workbuddy/reset-multisource-db.sh，保证种子数据是干净的。
+
+spring:
+  main:
+    banner-mode: "off"
+
+logging:
+  level:
+    root: WARN
+    com.xncoding.multisource: INFO
+    # 打开它可以看到 Hikari 从哪个池里借的连接（pos-pool / biz-pool），
+    # 排查「到底切没切」的时候很有用。平时关着，日志太吵
+    com.zaxxer.hikari: WARN

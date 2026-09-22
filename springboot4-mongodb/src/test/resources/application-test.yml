@@ -1,0 +1,26 @@
+# 集成测试专用配置（只在 @ActiveProfiles("test") 时生效）。
+#
+# 和前三篇同样的两个考虑：
+#
+# 1. 本篇要验证的索引自动创建、内嵌数组匹配、聚合管道、乐观锁行为，
+#    都得靠真实的 MongoDB 才说得清。内存库（flapdoodle embedded mongo）
+#    在 ARM / 新版驱动上的兼容性本来就不稳，而且它模拟不了索引与 explain，
+#    所以测试直接跑在真实服务端上。
+#
+# 2. 代价是测试依赖外部数据库。连不上时不做"整体失败"，
+#    测试类里会先探测一次可用性，连不上就整体 skip。
+spring:
+  mongodb:
+    # 换一个独立的库跑测试，避免把演示数据洗掉。
+    # 这也是 MongoDB 相对关系型的一个便利：建库不需要 DDL，
+    # 换个 database 名字就是另一个库，第一次写入时自动创建。
+    uri: mongodb://${MONGO_USER:root}:${MONGO_PASSWORD:root123456}@${MONGO_HOST:127.0.0.1}:${MONGO_PORT:27017}/springboot4_mongo_test?authSource=admin
+
+  data:
+    mongodb:
+      auto-index-creation: true
+
+logging:
+  level:
+    # 测试会发很多命令，DEBUG 会淹掉真正的失败信息
+    org.springframework.data.mongodb.core.MongoTemplate: WARN

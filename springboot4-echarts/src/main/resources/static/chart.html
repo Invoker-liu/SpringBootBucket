@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>订单统计图表</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <style>
+        html, body { margin: 0; padding: 0; background: #ffffff; }
+        #chart { width: 900px; height: 480px; }
+        body.export-mode #page-title { display: none; }
+        #page-title { font: 16px/1.6 "Microsoft YaHei", sans-serif; padding: 8px 16px 0; color: #333; }
+    </style>
+</head>
+<body>
+<div id="page-title">订单统计</div>
+<div id="chart"></div>
+<script>
+    // URL 参数即渲染参数：type 决定图型，days 决定回看窗口，width/height 决定画布尺寸，
+    // export=1 进入纯图表模式（隐藏标题，截图时画面只剩图本身）
+    var params = new URLSearchParams(location.search);
+    var type = params.get('type') || 'daily';
+    var days = parseInt(params.get('days') || '7', 10);
+    var width = parseInt(params.get('width') || '900', 10);
+    var height = parseInt(params.get('height') || '480', 10);
+
+    if (params.get('export') === '1') {
+        document.body.classList.add('export-mode');
+    }
+    var chartEl = document.getElementById('chart');
+    chartEl.style.width = width + 'px';
+    chartEl.style.height = height + 'px';
+
+    var chart = echarts.init(chartEl);
+
+    // 先注册 finished 监听再 setOption：渲染管线走完（含动画帧）才置 __chartReady，
+    // 无头浏览器侧等待这个标志位再截屏，避免截到半渲染画面
+    var ready = false;
+    chart.on('finished', function () {
+        if (!ready) {
+            ready = true;
+            window.__chartReady = true;
+        }
+    });
+
+    function dailyOption(items) {
+        var dates = items.map(function (it) { return it.date; });
+        var counts = items.map(function (it) { return it.orderCount; });
+        var amounts = items.map(function (it) { return it.amount; });
+        return {
+            tooltip: { trigger: 'axis' },
+            legend: { data: ['订单量', '销售额'] },
+            grid: { left: 60, right: 60, bottom: 40, top: 60 },
+            xAxis: { type: 'category', data: dates },
+            yAxis: [
+                { type: 'value', name: '订单量' },
+                { type: 'value', name: '销售额（元）' }
+            ],
+            series: [
+                { name: '订单量', type: 'bar', data: counts },
+                { name: '销售额', type: 'line', yAxisIndex: 1, data: amounts, smooth: true }
+            ]
+        };
+    }
+
+    function categoryOption(items) {
+        return {
+            tooltip: { trigger: 'item', formatter: '{b}: {c} 元（{d}%）' },
+            legend: { orient: 'vertical', left: 'left' },
+            series: [{
+                name: '类目销售额',
+                type: 'pie',
+                radius: ['35%', '62%'],
+                data: items.map(function (it) { return { name: it.category, value: it.amount }; }),
+                label: { formatter: '{b} {d}%' }
+            }]
+        };
+    }
+
+    var api = type === 'category' ? '/api/stats/category' : '/api/stats/daily?days=' + days;
+    fetch(api)
+        .then(function (resp) { return resp.json(); })
+        .then(function (data) {
+            var option = type === 'category' ? categoryOption(data.items) : dailyOption(data.items);
+            chart.setOption(option);
+        })
+        .catch(function (err) {
+            document.title = 'RENDER_ERROR';
+            console.error('统计数据加载失败', err);
+        });
+</script>
+</body>
+</html>

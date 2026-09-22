@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.xncoding</groupId>
+    <artifactId>springboot4-ai-mcp</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>springboot4-ai-mcp</name>
+    <description>Spring Boot 4 教程：用 Spring AI 注解把订单域业务方法暴露成 MCP 工具</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-ai.version>2.0.1</spring-ai.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring AI BOM：与 Boot 4.1.1 同线构建（2.0.1 的 starter 直接依赖
+                 spring-boot-starter-web:4.1.1），同时托管 MCP Java SDK（mcp-core 2.0.1） -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Web MVC 容器：Boot 4 用 webmvc starter（starter-web 已弃用） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- Spring AI MCP Server（WebMVC 传输，默认 Streamable HTTP，端点 /mcp）。
+             传递引入 spring-ai-mcp-annotations（@McpTool 注解所在模块）、
+             mcp-spring-webmvc、io.modelcontextprotocol.sdk:mcp-core -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server-webmvc</artifactId>
+        </dependency>
+
+        <!-- 测试：starter-test + @AutoConfigureMockMvc（Boot 4 拆包后在
+             org.springframework.boot.webmvc.test.autoconfigure） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

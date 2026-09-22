@@ -1,0 +1,44 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-redis
+
+  # ---------------------------------------------------------------------------
+  # 连接层：前缀是 spring.data.redis.*
+  #
+  # 注意与 MongoDB 篇的情形对照：MongoDB 在 Boot 4 把 spring.data.mongodb.*
+  # 改名成了 spring.mongodb.*；Redis 没有这回事 —— spring.data.redis.* 从
+  # Boot 3.0 用到 4.1.1 没动过。真正废弃的是 Boot 2 时代的 spring.redis.*，
+  # 而且废弃级别是 error：写上去启动直接失败，不是"还能用但告警"。
+  # 详见 README 的"属性前缀"一节。
+  # ---------------------------------------------------------------------------
+  data:
+    redis:
+      host: ${REDIS_HOST:192.168.1.97}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:root123456}
+      # 命令超时与建连超时，Boot 4 支持 Duration 写法
+      timeout: 2s
+      connect-timeout: 2s
+      lettuce:
+        pool:
+          # 池配置生效的前提是 classpath 上有 commons-pool2（pom 里已引入），
+          # 否则这一整块配置静默不生效，连接池永远只有一个连接
+          enabled: true
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    # Spring Data 视角的 Redis 命令：能看到下发的命令名与 key
+    org.springframework.data.redis.core: DEBUG

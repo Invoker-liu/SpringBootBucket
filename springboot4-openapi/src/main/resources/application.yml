@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: springboot4-openapi
+  # 管理侧 HTTP Basic 账号，对应文档里的 basicAuth 安全方案
+  security:
+    user:
+      name: admin
+      password: admin-2026
+      roles: ADMIN
+
+server:
+  port: ${SERVER_PORT:18200}
+
+springdoc:
+  swagger-ui:
+    # 展示每次请求的耗时，联调时最常被打开的开关之一
+    display-request-duration: true
+    # 文档按字母序展示标签
+    tags-sorter: alpha
+    operations-sorter: alpha

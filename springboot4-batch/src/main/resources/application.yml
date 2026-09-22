@@ -1,0 +1,33 @@
+server:
+  port: ${SERVER_PORT:18080}
+
+spring:
+  application:
+    name: springboot4-batch
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_batch}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 业务表建表（IF NOT EXISTS，幂等）；BATCH_* 元数据表由 BatchJdbcAutoConfiguration 负责
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+  batch:
+    job:
+      # 教程用 HTTP 触发演示，不让应用一启动就跑 job；
+      # 生产里的日常调度把它打开，配合 spring.batch.job.name 指定任务
+      enabled: false
+    jdbc:
+      # MySQL 不是嵌入式库，Boot 4 默认只给嵌入式库建 BATCH_* 元数据表，
+      # 这里显式打开（前缀是 spring.batch.jdbc，BatchJdbcProperties 字节码实证）
+      initialize-schema: always
+
+logging:
+  level:
+    org.springframework.batch: INFO
+    com.xncoding.batch: INFO

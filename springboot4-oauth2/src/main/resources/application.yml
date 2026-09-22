@@ -1,0 +1,39 @@
+server:
+  port: ${SERVER_PORT:18190}
+
+spring:
+  application:
+    name: springboot4-oauth2
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # PEM 公钥文件（Resource 类型，classpath: 直接支持），
+          # 配了它 Boot 就走 PublicKey 路线装配 JwtDecoder
+          public-key-location: classpath:jwk/public.pem
+          # 受众校验：令牌的 aud claim 必须包含 order-service，缺失或不符一律 401
+          audiences: order-service
+      client:
+        provider:
+          # 自定义授权服务器必须声明 provider，否则启动报
+          # Provider ID must be specified for client registration
+          order-service:
+            token-uri: http://localhost:${SERVER_PORT:18190}/oauth2/token
+        registration:
+          logistics:
+            provider: order-service
+            client-id: logistics
+            client-secret: logistics-secret-2026
+            authorization-grant-type: client_credentials
+            scope: orders:read
+          reports:
+            provider: order-service
+            client-id: reports
+            client-secret: reports-secret-2026
+            authorization-grant-type: client_credentials
+            scope: orders:read,orders:write
+
+logging:
+  level:
+    com.xncoding.oauth2: INFO

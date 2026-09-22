@@ -1,0 +1,34 @@
+server:
+  port: ${SERVER_PORT:18110}
+
+spring:
+  application:
+    name: springboot4-schedule
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_schedule}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 业务表建表（IF NOT EXISTS，幂等）
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+app:
+  scheduler:
+    # 调度线程池大小。1 = Boot 默认行为（单线程，演示停摆）；4 = 多线程并行
+    pool-size: ${SCHEDULER_POOL:1}
+    thread-name-prefix: order-sched-
+  order:
+    # 超时取消阈值。演示用 15 秒，生产一般是 15 分钟（PT15M）
+    timeout-seconds: ${ORDER_TIMEOUT_SECONDS:15}
+  chaos:
+    # 黑名单同步任务的模拟耗时（慢调用占住调度线程）
+    slow-millis: 8000
+
+logging:
+  level:
+    com.xncoding.schedule: INFO

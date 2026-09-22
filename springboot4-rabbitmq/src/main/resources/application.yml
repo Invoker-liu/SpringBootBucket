@@ -1,0 +1,44 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-rabbitmq
+
+  # ---------------------------------------------------------------------------
+  # 连接层：前缀 spring.rabbitmq.*，Boot 4 没改名（javap 常量池实证）。
+  # ---------------------------------------------------------------------------
+  rabbitmq:
+    host: ${RABBITMQ_HOST:192.168.1.97}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:admin}
+    password: ${RABBITMQ_PASSWORD:admin123456}
+    virtual-host: /
+    # 发送方可靠性：correlated = broker 对每条消息回执确认（触发 ConfirmCallback）
+    publisher-confirm-type: correlated
+    # 路由不到任何队列时回执给发送方（触发 ReturnsCallback），不静默丢弃
+    publisher-returns: true
+    template:
+      mandatory: true
+    listener:
+      simple:
+        # acknowledge-mode 默认 auto：方法正常返回即 ack，抛异常即 nack/重试
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 500ms
+          multiplier: 1.5
+          max-interval: 2s
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    # 能看到 AMQP 连接、声明拓扑、消息投递的关键日志
+    org.springframework.amqp: INFO
+    org.springframework.amqp.rabbit.connection: INFO

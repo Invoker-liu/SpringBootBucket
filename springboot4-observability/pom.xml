@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.xncoding</groupId>
+    <artifactId>springboot4-observability</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>springboot4-observability</name>
+    <description>Spring Boot 4 教程：Actuator + Micrometer + OpenTelemetry 可观测性（指标/链路/日志三件套）</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Web MVC：Boot 4 中 spring-boot-starter-web 已弃用，改用 webmvc -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+
+        <!-- Actuator：health/metrics/prometheus 等端点，传递 micrometer-observation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- OpenTelemetry 路线（Boot 4.1 starter，BOM 4.1.1 管理）：
+             micrometer-tracing-bridge-otel 1.7.1 + opentelemetry-exporter-otlp 1.62.0
+             + micrometer-registry-otlp 1.17.1 + spring-boot-opentelemetry，
+             链路与日志 OTLP 导出的属性前缀都是 management.opentelemetry.* -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
+        </dependency>
+
+        <!-- Prometheus 刮擦端点：无独立 starter，补 OTLP 之外的 Pull 模式导出 -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <!-- 测试：webmvc 测试 starter，含 RestTestClient 与 MockMvc 设施 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

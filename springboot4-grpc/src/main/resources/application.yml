@@ -1,0 +1,21 @@
+server:
+  port: ${SERVER_PORT:18150}
+
+spring:
+  application:
+    name: springboot4-grpc
+  grpc:
+    server:
+      # gRPC 网络端口，与 HTTP 端口分离
+      port: ${GRPC_SERVER_PORT:18151}
+      reflection:
+        enabled: true
+    client:
+      channel:
+        # 通道名 logistics：createChannel("logistics") 按名取 target
+        logistics:
+          target: localhost:${GRPC_SERVER_PORT:18151}
+
+logging:
+  level:
+    com.xncoding.grpc: INFO

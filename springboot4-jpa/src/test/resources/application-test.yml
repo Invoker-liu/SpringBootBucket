@@ -1,0 +1,24 @@
+# 集成测试专用配置（只在 @ActiveProfiles("test") 时生效）。
+#
+# 和上一篇同样的两个考虑：
+#
+# 1. 本篇要验证的软删除、乐观锁、N+1 抓取策略，都是要靠真实数据库才说得清的行为，
+#    换成 H2 就成了"测了个仿制品"。所以不引入内存库，测试直接跑在 MySQL 上。
+#
+# 2. 代价是测试依赖外部数据库。机器上没起 MySQL 时，Hikari 默认会在建池阶段抛异常，
+#    Spring 上下文直接创建失败，整个测试类报错而不是"跳过"。
+#    把 initialization-fail-timeout 设为 -1，连接池改成懒加载：
+#    上下文创建阶段不碰数据库，等测试用例自己发第一条 SQL 时才真正去连。
+#    于是测试类可以先探测一次数据库可用性，连不上就整体 skip，不会出现一片红。
+spring:
+  datasource:
+    hikari:
+      initialization-fail-timeout: -1
+      # 探测用，别等太久
+      connection-timeout: 3000
+
+# 测试跑起来会发不少 SQL，日志按 DEBUG 打会淹掉真正的失败信息，压到 WARN。
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    org.hibernate.orm.jdbc.bind: WARN

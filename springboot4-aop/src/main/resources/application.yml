@@ -1,0 +1,29 @@
+server:
+  port: ${SERVER_PORT:18160}
+
+spring:
+  application:
+    name: springboot4-aop
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_aop}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 错误响应统一走 RFC 9457 的 application/problem+json。
+  # 切面里抛出的幂等拒绝异常最后从这里出去，正文里的响应体就是它渲染的。
+  mvc:
+    problemdetails:
+      enabled: true
+
+  # 建表用 Boot 4 的 spring.sql.init.*。只有 schema 没有 data：
+  # 订单与库存是内存态，审计表只增不改，清理由 /api/ops/audit-clear 负责。
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+
+logging:
+  level:
+    com.xncoding.aop: INFO

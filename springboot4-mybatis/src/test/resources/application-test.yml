@@ -1,0 +1,16 @@
+# 集成测试专用配置（只在 @ActiveProfiles("test") 时生效）。
+#
+# 本篇的测试要真连 MySQL 才能验证分页插件、逻辑删除、乐观锁这些行为，
+# 所以不引入内存库替代。但这样会带来一个问题：机器上没起 MySQL 时，
+# Hikari 会在建池阶段就抛异常，Spring 上下文直接创建失败，
+# 整个测试类报错而不是"跳过"。
+#
+# 把 initialization-fail-timeout 设为 -1，连接池改成懒加载：
+# 上下文创建时不碰数据库，等测试用例自己发第一条 SQL 时才真正去连。
+# 于是测试类可以先探测数据库可用性，连不上就整体 skip，不会出现一片红。
+spring:
+  datasource:
+    hikari:
+      initialization-fail-timeout: -1
+      # 探测用，别等太久
+      connection-timeout: 3000

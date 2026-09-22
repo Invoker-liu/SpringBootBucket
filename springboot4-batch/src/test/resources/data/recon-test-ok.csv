@@ -1,0 +1,6 @@
+﻿orderNo,merchant,amount,status
+SO20001,星巴克,42.00,PAID
+SO20002,盒马,156.70,SETTLED
+SO20003,瑞幸,19.90,PAID
+SO20004,山姆,329.00,PAID
+SO20005,叮咚买菜,88.80,REFUND

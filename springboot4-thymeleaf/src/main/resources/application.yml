@@ -1,0 +1,12 @@
+server:
+  # 本系列统一端口约定：环境变量优先，默认 18280
+  port: ${SERVER_PORT:18280}
+
+spring:
+  application:
+    name: springboot4-thymeleaf
+  thymeleaf:
+    # 模板缓存：开发期关掉方便改完刷新即见；生产保持默认 true
+    cache: false
+    encoding: UTF-8
+    # prefix 默认 classpath:/templates/，suffix 默认 .html，均未改动

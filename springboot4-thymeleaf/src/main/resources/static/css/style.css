@@ -1,0 +1,38 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; color: #2c3e50; background: #f5f6fa; }
+
+.navbar { background: #2c3e50; color: #fff; padding: 12px 32px; display: flex; gap: 24px; align-items: center; }
+.navbar a { color: #ecf0f1; text-decoration: none; }
+.navbar a:hover { text-decoration: underline; }
+.navbar .brand { font-weight: bold; margin-right: 16px; }
+
+.container { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+.container.narrow { max-width: 640px; }
+
+h1 { margin-bottom: 16px; font-size: 22px; }
+
+.flash { background: #e8f8f0; border: 1px solid #27ae60; color: #1e8449; padding: 10px 14px; border-radius: 4px; margin-bottom: 16px; }
+
+.filter { display: flex; gap: 12px; margin-bottom: 16px; align-items: center; }
+.filter input[type="text"] { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; width: 240px; }
+
+.btn { display: inline-block; padding: 6px 14px; background: #2980b9; color: #fff; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; }
+.btn:hover { background: #21618c; }
+
+.table { width: 100%; border-collapse: collapse; background: #fff; }
+.table th, .table td { border: 1px solid #e0e0e0; padding: 8px 10px; text-align: left; font-size: 14px; }
+.table thead th { background: #f0f2f5; }
+.table .empty { text-align: center; color: #95a5a6; }
+
+.pager { margin-top: 14px; display: flex; gap: 16px; align-items: center; font-size: 14px; }
+
+.field { margin-bottom: 14px; display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 14px; font-weight: bold; }
+.field input, .field select, .field textarea { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+.field .input-error { border-color: #e74c3c; background: #fdf3f2; }
+.field .error { color: #c0392b; font-size: 13px; }
+
+.actions { display: flex; gap: 12px; margin-top: 18px; }
+
+.footer { text-align: center; color: #95a5a6; font-size: 12px; padding: 20px 0 32px; }

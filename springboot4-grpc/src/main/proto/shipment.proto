@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.xncoding.grpc.shipment";
+option java_outer_classname = "ShipmentProto";
+
+package shipment;
+
+// 物流运单服务：订单服务经 gRPC 调用
+service ShipmentService {
+  // 查询运单（unary）
+  rpc GetShipment(GetShipmentRequest) returns (ShipmentReply);
+  // 通知发货（unary）：订单支付后物流建运单
+  rpc NotifyShipped(NotifyShippedRequest) returns (ShipmentReply);
+  // 追踪运单轨迹（服务端流式）
+  rpc TrackShipment(TrackShipmentRequest) returns (stream TrackEvent);
+}
+
+message GetShipmentRequest {
+  string shipment_id = 1;
+}
+
+message NotifyShippedRequest {
+  string order_no = 1;
+  string carrier = 2;
+  int32 item_count = 3;
+}
+
+message ShipmentReply {
+  string shipment_id = 1;
+  string order_no = 2;
+  string carrier = 3;
+  string status = 4;
+}
+
+message TrackShipmentRequest {
+  string shipment_id = 1;
+}
+
+message TrackEvent {
+  string shipment_id = 1;
+  string status = 2;
+  string location = 3;
+  int64 occurred_at = 4;
+}

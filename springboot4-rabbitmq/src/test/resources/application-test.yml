@@ -1,0 +1,10 @@
+# 测试环境：连真实树莓派 broker，但走独立 vhost 拓扑不现实（admin 无建 vhost 权限），
+# 改用专属队列名前缀隔离——测试里 RabbitTopologyConfig 的常量是静态的，
+# 所以这里只调整连接行为，隔离靠测试本身的队列清空（RabbitAdmin.purgeQueue）。
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:192.168.1.97}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:admin}
+    password: ${RABBITMQ_PASSWORD:admin123456}
+    virtual-host: /

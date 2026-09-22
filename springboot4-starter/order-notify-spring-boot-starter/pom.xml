@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.xncoding</groupId>
+        <artifactId>springboot4-starter</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>order-notify-spring-boot-starter</artifactId>
+    <packaging>jar</packaging>
+    <name>order-notify-spring-boot-starter</name>
+    <description>订单短消息通知 starter：空壳聚合模块，只负责把自动配置模块与依赖一起带给引用方</description>
+
+    <dependencies>
+        <!-- 引用方只需要写这一个坐标：自动配置模块随它传递进入 classpath -->
+        <dependency>
+            <groupId>com.xncoding</groupId>
+            <artifactId>order-notify-spring-boot-autoconfigure</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

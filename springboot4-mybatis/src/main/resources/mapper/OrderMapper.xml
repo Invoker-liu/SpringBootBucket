@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xncoding.mybatis.mapper.OrderMapper">
+
+    <!-- 列清单抽出来复用。列名是下划线，属性是驼峰，
+         靠 mybatis-plus.configuration.map-underscore-to-camel-case=true 自动对上 -->
+    <sql id="allColumns">
+        id, order_no, customer_name, customer_phone, total_amount,
+        status, remark, items, created_at, updated_at, deleted, version
+    </sql>
+
+    <!--
+      手写的查询要用这个 resultMap，不能用 resultType。
+
+      原因在 items 这一列上，库里存的是 JSON 字符串，实体里是 List<OrderItem>，
+      两者之间的转换靠 @TableField(typeHandler = Jackson3TypeHandler.class) 声明。
+      而 MyBatis 的 resultType 走的是自动映射，自动映射不看 @TableField，
+      只会去找一个能把 VARCHAR 转成 List 的内置 typeHandler，找不到就报错。
+      只有 resultMap 里的 <result> 才能把 typeHandler 显式接上。
+
+      MyBatis-Plus 自己生成的 SQL 走的是另一条路，靠实体上的 autoResultMap = true
+      让框架生成等价的 resultMap，所以框架查询不用手写这个。
+    -->
+    <resultMap id="orderResultMap" type="com.xncoding.mybatis.domain.Order">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="customer_phone" property="customerPhone"/>
+        <result column="total_amount" property="totalAmount"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="items" property="items"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.Jackson3TypeHandler"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+        <result column="version" property="version"/>
+    </resultMap>
+
+    <!--
+      回收站查询。
+      关键点：这是手写 SQL，MyBatis-Plus 不会自动追加 deleted = 0，
+      所以能查到被逻辑删除的行。反过来也提醒一句，手写 SQL 必须自己记得
+      加上 deleted = 0，否则正常查询会把已删除的数据带出来。
+    -->
+    <select id="selectDeleted" resultMap="orderResultMap">
+        SELECT
+        <include refid="allColumns"/>
+        FROM t_order
+        WHERE deleted = 1
+        ORDER BY updated_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <!--
+      按状态聚合统计。status 列是字符串，映射到 OrderStatus 枚举靠默认的 EnumTypeHandler。
+      这里没有 JSON 列参与，用 resultType 就够，不必上 resultMap。
+    -->
+    <select id="selectStatusStats" resultType="com.xncoding.mybatis.dto.OrderStatusStat">
+        SELECT status                         AS status,
+               COUNT(*)                       AS order_count,
+               COALESCE(SUM(total_amount), 0) AS total_amount
+        FROM t_order
+        WHERE deleted = 0
+        GROUP BY status
+        ORDER BY status
+    </select>
+
+</mapper>

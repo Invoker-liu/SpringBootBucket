@@ -1,0 +1,47 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-jpa
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_jpa}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 5000
+
+  # 建表交给 sql/schema.sql，Hibernate 只做校验。
+  # validate 比 none 有用得多：实体与表结构对不上时应用直接启动失败，
+  # 而不是等到运行期某条 SQL 报错才发现。
+  #
+  # 这里没有配 spring.sql.init：它是"应用启动时执行建表脚本"的机制，
+  # 而 schema.sql 里带着 DROP TABLE，配上就会每次启动清库。
+  # 建表脚本改成手动执行一次，见 README。
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: Asia/Shanghai
+    show-sql: false
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  level:
+    # Hibernate 7 里 SQL 日志走专用 logger，不再靠 spring.jpa.show-sql
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

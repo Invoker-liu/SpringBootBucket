@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  只被 dynamicSqlSessionFactory 加载，而那个工厂绑的是路由数据源。
+  所以这份 XML 里的 SQL 会被发到哪个库，取决于执行时线程上的标识 ——
+  同一句 SQL，两次请求可能落在两个不同的库里。
+  DATABASE() 与 CONNECTION_ID() 就是用来抓住这一点的。
+-->
+<mapper namespace="com.xncoding.multisource.mapper.probe.ProbeUserMapper">
+
+    <select id="selectProbe" resultType="com.xncoding.multisource.domain.ProbeUser">
+        SELECT id,
+               username,
+               real_name,
+               DATABASE()      AS databaseName,
+               CONNECTION_ID() AS connectionId
+        FROM t_user
+        WHERE id = 1
+    </select>
+
+</mapper>

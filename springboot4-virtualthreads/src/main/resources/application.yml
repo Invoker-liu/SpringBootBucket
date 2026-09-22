@@ -1,0 +1,22 @@
+server:
+  # 本系列统一端口约定：环境变量优先，默认 18270
+  port: ${SERVER_PORT:18270}
+  tomcat:
+    threads:
+      # 平台线程档的请求处理池上限：压测并发 100 时成为吞吐瓶颈，
+      # 用于放大与虚拟线程档的对比；虚拟线程档下此属性自动失效
+      max: 20
+
+spring:
+  application:
+    name: springboot4-virtualthreads
+  # 虚拟线程均为守护线程：@Scheduled 调度器等场景下 JVM 可能提前退出，
+  # 官方建议开启 keep-alive 保持 JVM 存活（对平台线程档无副作用）
+  main:
+    keep-alive: true
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %-5level %logger{24} - %msg%n"

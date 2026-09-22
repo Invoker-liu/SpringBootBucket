@@ -1,0 +1,74 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-transaction
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_tx}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      pool-name: tx-pool
+      # 池子开小一点，目的是让「事务占着连接不放」这件事在日志里看得更清楚：
+      # 一个还没提交的事务会一直握着自己那条连接，池里能借的就少一条。
+      maximum-pool-size: 6
+      minimum-idle: 2
+      connection-timeout: 5000
+
+  # 错误响应统一走 RFC 9457 的 application/problem+json。
+  # 事务相关的异常最后都会从这里出去，正文里的响应体就是它渲染的。
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+  # 建表与灌种子。这里用的是 Boot 4 的 spring.sql.init.*，
+  # 不是被废弃的 spring.datasource.schema / .data —— 那 12 个属性在 Boot 4 里是
+  # level=error 的废弃项，写进 yml 会直接启动失败。
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
+      continue-on-error: false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    # 这三行是本篇的「取证开关」。打开之后事务的每一步都有日志：
+    #   org.springframework.transaction.interceptor.TransactionInterceptor
+    #       -> Getting transaction for [...] / Completing transaction for [...]
+    #   AbstractPlatformTransactionManager
+    #       -> Creating new transaction with name [...] / Participating in existing transaction
+    #       -> Suspending current transaction / Resuming suspended transaction after completion ...
+    #       -> Initiating transaction commit / Initiating transaction rollback
+    #   DataSourceTransactionManager
+    #       -> Acquired Connection [...] / Switching JDBC Connection [...] / Releasing JDBC Connection [...]
+    # 注意这些日志都在 DEBUG 级，info 级一条都不会出现，
+    # 所以「事务到底开没开」平时是看不见的 —— 这正是它容易出问题的原因。
+    org.springframework.transaction: DEBUG
+    org.springframework.jdbc.datasource.DataSourceTransactionManager: DEBUG
+    org.springframework.jdbc.support.JdbcTransactionManager: DEBUG
+    # 事务不生效时，框架会在这里留下线索（比如非 public 方法被跳过）
+    org.springframework.transaction.interceptor: DEBUG
+    # 业务 mapper 的 SQL 与参数
+    com.xncoding.transaction.mapper: DEBUG

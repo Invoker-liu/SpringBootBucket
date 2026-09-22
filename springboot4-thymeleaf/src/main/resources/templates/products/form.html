@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${form.id != null} ? '编辑商品' : '新增商品')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+
+<main class="container narrow">
+    <h1 th:text="${form.id != null} ? '编辑商品 #' + ${form.id} : '新增商品'">新增商品</h1>
+
+    <!-- th:object 绑定表单对象；th:field 负责取值回显与生成 id/name；
+         编辑时提交到 /products/{id}，新增时提交到 /products -->
+    <form method="post"
+          th:action="${form.id != null} ? @{/products/{id}(id=${form.id})} : @{/products}"
+          th:object="${form}">
+        <div class="field">
+            <label for="name">商品名称</label>
+            <input type="text" id="name" th:field="*{name}" th:errorclass="input-error"
+                   placeholder="2 到 20 个字符">
+            <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">名称错误</span>
+        </div>
+
+        <div class="field">
+            <label for="category">商品分类</label>
+            <select id="category" th:field="*{category}" th:errorclass="input-error">
+                <option value="">请选择分类</option>
+                <option th:each="c : ${T(com.xncoding.thymeleaf.service.ProductService).CATEGORIES}"
+                        th:value="${c}"
+                        th:text="${c == 'DIGITAL'} ? '数码' : (${c == 'BOOKS'} ? '图书' : (${c == 'CLOTHING'} ? '服饰' : '食品'))">
+                    分类
+                </option>
+            </select>
+            <span class="error" th:if="${#fields.hasErrors('category')}" th:errors="*{category}">分类错误</span>
+        </div>
+
+        <div class="field">
+            <label for="price">售价（元）</label>
+            <input type="text" id="price" th:field="*{price}" th:errorclass="input-error"
+                   placeholder="大于 0 的数字">
+            <span class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">价格错误</span>
+        </div>
+
+        <div class="field">
+            <label for="stock">库存</label>
+            <input type="text" id="stock" th:field="*{stock}" th:errorclass="input-error"
+                   placeholder="大于等于 0 的整数">
+            <span class="error" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}">库存错误</span>
+        </div>
+
+        <div class="field">
+            <label for="summary">简介</label>
+            <textarea id="summary" rows="3" th:field="*{summary}" th:errorclass="input-error"
+                      placeholder="不超过 50 个字符，可留空"></textarea>
+            <span class="error" th:if="${#fields.hasErrors('summary')}" th:errors="*{summary}">简介错误</span>
+        </div>
+
+        <div class="actions">
+            <button type="submit" th:text="${form.id != null} ? '保存修改' : '创建商品'">提交</button>
+            <a class="btn" th:href="@{/products}">返回列表</a>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,10 @@
+server:
+  port: 0
+
+spring:
+  data:
+    redis:
+      # 逻辑库隔离：07 篇测试用 db1，08 篇缓存测试用 db2
+      database: 2
+  cache:
+    type: redis

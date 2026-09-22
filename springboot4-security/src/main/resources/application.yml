@@ -1,0 +1,28 @@
+server:
+  port: ${SERVER_PORT:18180}
+
+spring:
+  application:
+    name: springboot4-security
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME:springboot4_security}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:root123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 业务异常（404 / 409）统一走 RFC 9457 的 application/problem+json。
+  # 安全过滤器层的 401 / 403 在 SecurityProblemWriter 里手工写，两者的 type 风格保持一致。
+  mvc:
+    problemdetails:
+      enabled: true
+
+  # 用户表与审计表的建表脚本，每次启动都跑一遍（全部 IF NOT EXISTS，可重复执行）
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+
+logging:
+  level:
+    com.xncoding.security: INFO

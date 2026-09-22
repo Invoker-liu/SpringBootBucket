@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- 布局片段库：head / nav / footer 三个 th:fragment，供各页面 th:replace 复用 -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">商品管理</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav th:fragment="nav">
+    <div class="navbar">
+        <span class="brand" th:text="${appName}">商品运营后台</span>
+        <a th:href="@{/products}">商品列表</a>
+        <a th:href="@{/products/new}">新增商品</a>
+    </div>
+</nav>
+
+<footer th:fragment="footer">
+    <p class="footer">Xiong Neng · SpringBoot4 全家桶 · springboot4-thymeleaf</p>
+</footer>
+
+</body>
+</html>

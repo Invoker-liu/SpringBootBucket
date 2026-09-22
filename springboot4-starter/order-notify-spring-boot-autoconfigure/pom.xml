@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.xncoding</groupId>
+        <artifactId>springboot4-starter</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>order-notify-spring-boot-autoconfigure</artifactId>
+    <packaging>jar</packaging>
+    <name>order-notify-spring-boot-autoconfigure</name>
+    <description>订单短消息通知 starter 的自动配置模块：属性类、条件装配、默认实现都在这里</description>
+
+    <dependencies>
+        <!-- 自动配置的全部注解与条件机制都在这个模块里，依赖范围保持缺省 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <!-- 日志门面。官方 autoconfigure 模块同样单独声明它（optional），
+             运行期由引用方（如 starter-webmvc 带 logback）提供实现 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Jackson 3 消息渲染用。optional=true：引用方不会传递得到，
+             classpath 上没有它时自动配置走 PlainMessageRenderer 回退分支 -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 测试：ApplicationContextRunner / FilteredClassLoader 在 spring-boot-test 里；
+             JacksonAutoConfiguration 在 spring-boot-jackson 里，runner 起上下文时
+             连它一起装配才有 ObjectMapper bean -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-jackson</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

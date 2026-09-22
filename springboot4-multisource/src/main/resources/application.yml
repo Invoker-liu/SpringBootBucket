@@ -1,0 +1,86 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: springboot4-multisource
+
+  # 这里【故意】没有 spring.datasource.url / username / password。
+  #
+  # 两个原因：
+  #  1. 只要容器里出现两个 DataSource，DataSourceAutoConfiguration 内嵌的
+  #     PooledDataSourceConfiguration 就命中 @ConditionalOnMissingBean(DataSource.class) 而退让，
+  #     spring.datasource.* 里的连接信息根本不会被读。
+  #  2. Boot 4 把 spring.datasource.schema / .data / .initialization-mode / .platform /
+  #     .separator / .sql-script-encoding / .continue-on-error 这 7 个属性标成了
+  #     level=error 的废弃项（全部指向 spring.sql.init.*），写了会直接启动失败。
+  #     旧版多数据源教程清一色用 spring.datasource.schema 给两个库建表，在 Boot 4 上就是启动即挂。
+  #
+  # 顺带记一笔：Boot 4 新加了 spring.datasource.connection-fetch（eager / lazy）。
+  # 它作用于【自动配置出来的】那个 DataSource，本工程手工声明数据源，所以配了也不生效。
+  # 详见文章里「连接是什么时候绑定的」那一节。
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+  jackson:
+    default-property-inclusion: non_null
+
+# 两个库的地址。用自定义前缀，由 config 里的
+# @ConfigurationProperties("app.datasource.pos") 绑定到 DataSourceProperties。
+#
+# 注意数据源属性是「两层」的写法：
+#   app.datasource.pos.*        → DataSourceProperties（url / username / password / driver-class-name）
+#   app.datasource.pos.hikari.* → HikariDataSource 自己的连接池参数
+# 这是 Boot 官方文档给多数据源的推荐拆法，和单数据源时
+# spring.datasource.* / spring.datasource.hikari.* 的分工完全一致。
+app:
+  datasource:
+    pos:
+      url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME_POS:springboot4_pos}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${DB_USER:root}
+      password: ${DB_PASSWORD:root123456}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        pool-name: pos-pool
+        maximum-pool-size: 8
+        minimum-idle: 2
+        connection-timeout: 5000
+    biz:
+      url: jdbc:mysql://${DB_HOST:192.168.1.97}:${DB_PORT:3306}/${DB_NAME_BIZ:springboot4_biz}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${DB_USER:root}
+      password: ${DB_PASSWORD:root123456}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        pool-name: biz-pool
+        maximum-pool-size: 8
+        minimum-idle: 2
+        connection-timeout: 5000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # health 默认就开着，这里显式写出来省得读者去猜
+        include: health
+  endpoint:
+    health:
+      # 展开每个数据源的健康明细。多数据源下这是「两个库都连上了」最省事的证明
+      show-details: always
+
+mybatis-plus:
+  configuration:
+    # 下划线列名自动映射到驼峰属性
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+
+logging:
+  level:
+    # 打开三个 mapper 包的 DEBUG，MyBatis 会把执行的 SQL 和参数打出来。
+    # 多数据源排查就靠它：同一条 SQL 出现在日志里，看不出连的是哪个库，
+    # 所以还要配合 Hikari 的连接池名（pos-pool / biz-pool）一起看，见 config 里的说明。
+    com.xncoding.multisource.mapper: DEBUG
+    # 打开连接池的 DEBUG，切换数据源时能看到是从哪个池里借的连接
+    com.zaxxer.hikari.HikariDataSource: DEBUG

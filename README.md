@@ -1,8 +1,10 @@
 # SpringBoot 4.x 全家桶
 
-当前项目是 [SpringBootBucket](https://github.com/yidao620c/SpringBootBucket) 的 Spring Boot 4.x 重制版。
+SpringBootBucket4.x全家桶基于最新版本 Spring Boot 4.x 版本编写。Spring Boot 4.0基于Spring Framework 7.0，全面支持 Java25（含虚拟线程优化）。核心的新特性包括：HTTP Service Clients 简化远程调用；原生API版本管理；全面采用JSpecify空安全体系（默认为空，编译器防NPE）；关键依赖升级至Jackson 3.0、Tomcat 11、Hibernate 7.1等；支持Gradle 9；Redis静态主从配置；移除Undertow。
 
-对 Java Web 开发中常用的各项技术，通过和 Spring Boot 的集成，以「**一篇博客 + 一个可运行项目**」的形式详细说明。
+
+Spring Boot 现在已经成为Java 开发领域的一颗璀璨明珠，它本身是包容万象的。本项目对目前 Java Web 开发中常用的各项技术，通过和 Spring Boot 的集成，以「**一篇博客 + 一个可运行项目**」的形式详细说明。
+
 
 每个子项目只引入完成该主题所需的最小依赖，可独立运行，也可按业务需要自由组合。
 
